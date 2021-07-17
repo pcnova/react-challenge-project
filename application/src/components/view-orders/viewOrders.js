@@ -33,7 +33,7 @@ class ViewOrders extends Component {
                         id: order._id,
                         ordered_by: order.ordered_by,
                         quantity: order.quantity,
-                        menu_item: order.menu_item
+                        order_item: order.order_item
                     }),
                 headers:
                     {
