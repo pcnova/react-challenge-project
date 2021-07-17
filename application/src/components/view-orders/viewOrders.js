@@ -20,6 +20,31 @@ class ViewOrders extends Component {
             });
     }
 
+    save(order, event)
+    {
+        event.preventDefault();
+
+        fetch(
+            `${SERVER_IP}/api/edit-order`,
+            {
+                method: 'POST',
+                body: JSON.stringify(
+                    {
+                        id: order._id,
+                        ordered_by: order.ordered_by,
+                        quantity: order.quantity,
+                        menu_item: order.menu_item
+                    }),
+                headers:
+                    {
+                        'Content-Type': 'application/json'
+                    }
+            })
+        .then(res => res.json())
+        .then(response => console.log("Success", JSON.stringify(response)))
+        .catch(error => console.error(error));
+    }
+
     render() {
         return (
             <Template>
@@ -36,8 +61,8 @@ class ViewOrders extends Component {
                                     <p>Order placed at {`${createdDate.getHours()}:${createdDate.getMinutes()}:${createdDate.getSeconds()}`}</p>
                                     <p>Quantity: {order.quantity}</p>
                                  </div>
-                                 <div className="col-md-4 view-order-right-col">
-                                     <button className="btn btn-success">Edit</button>
+                                <div className="col-md-4 view-order-right-col">
+                                    <button className="btn btn-success" onClick={event => this.save(order, event)}>Edit</button>
                                      <button className="btn btn-danger">Delete</button>
                                  </div>
                             </div>
