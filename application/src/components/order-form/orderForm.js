@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { Template } from '../../components';
 import { connect } from 'react-redux';
-import { SERVER_IP } from '../../private';
-import FoodSelector from '../common/foodSelector';
+import { FOOD_ITEMS, SERVER_IP } from '../../private';
+import ItemSelector from '../common/itemSelector';
 import './orderForm.css';
 
 const ADD_ORDER_URL = `${SERVER_IP}/api/add-order`
@@ -60,7 +60,8 @@ class OrderForm extends Component {
                 <div className="form-wrapper">
                     <form>
                         <label className="form-label">I'd like to order...</label><br />
-                        <FoodSelector
+                        <ItemSelector
+                            hintItem="Lunch menu:" items={FOOD_ITEMS}
                             selectedItem={this.state.order_item}
                             onItemSelected={(item) => this.menuItemChosen(item)}
                             className="menu-select" />
