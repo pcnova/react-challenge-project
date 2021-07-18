@@ -12,3 +12,5 @@ export const FOOD_ITEMS =
         "Eggplant and Mushroom Panini",
         "Chili Con Carne"
     ];
+
+export const QTTY_ITEMS = [1, 2, 3, 4, 5, 6];

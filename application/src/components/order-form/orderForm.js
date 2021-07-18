@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Template } from '../../components';
 import { connect } from 'react-redux';
-import { FOOD_ITEMS, SERVER_IP } from '../../private';
+import { FOOD_ITEMS, QTTY_ITEMS, SERVER_IP } from '../../private';
 import ItemSelector from '../common/itemSelector';
 import './orderForm.css';
 
@@ -25,8 +25,8 @@ class OrderForm extends Component {
         this.setState({ order_item: item });
     }
 
-    menuQuantityChosen(event) {
-        this.setState({ quantity: event.target.value });
+    menuQuantityChosen(item) {
+        this.setState({ quantity: item });
     }
 
     submitOrder(event) {
@@ -67,14 +67,10 @@ class OrderForm extends Component {
                             className="menu-select" />
                         <br />
                         <label className="qty-label">Qty:</label>
-                        <select value={this.state.quantity} onChange={(event) => this.menuQuantityChosen(event)}>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
-                            <option value="6">6</option>
-                        </select>
+                        <ItemSelector
+                            items={QTTY_ITEMS}
+                            selectedItem={this.state.quantity}
+                            onItemSelected={(item) => this.menuQuantityChosen(item)} />
                         <button type="button" className="order-btn" onClick={(event) => this.submitOrder(event)}>Order It!</button>
                     </form>
                 </div>
