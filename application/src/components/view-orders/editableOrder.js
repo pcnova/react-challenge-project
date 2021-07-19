@@ -63,6 +63,20 @@ class EditableOrder extends Component
         }
     }
 
+    handleDelete(order, event)
+    {
+        event.preventDefault();
+
+        this.delete(order)
+            .then(deleted =>
+            {
+                if (deleted)
+                {
+                    this.props.onDelete(order._id);
+                }
+            });
+    }
+
     handleItemChanged(item)
     {
         this.setState(sta => { return { ...sta, selectedItem: item } });
@@ -119,6 +133,30 @@ class EditableOrder extends Component
             .catch(error => { console.error(error); return false;});
     }
 
+    delete(order)
+    {
+        return fetch(
+            `${SERVER_IP}/api/delete-order`,
+            {
+                method: 'POST',
+                body: JSON.stringify(
+                    {
+                        id: order._id
+                    }),
+                headers:
+                {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(res => res.json())
+            .then(response =>
+            {
+                console.log("Success?", JSON.stringify(response));
+                return response.success;
+            })
+            .catch(error => { console.error(error); return false; });
+    }
+
     render()
     {
         const order = this.state.order;
@@ -151,7 +189,10 @@ class EditableOrder extends Component
                         onClick={event => this.toggleEdit(order, event)}>
                         {this.state.editAction}
                     </button>
-                    <button className="btn btn-danger">Delete</button>
+                    <button className="btn btn-danger"
+                        onClick={event => this.handleDelete(order, event)}>
+                        Delete
+                    </button>
                 </div>
             </div>
         );

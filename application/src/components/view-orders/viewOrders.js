@@ -21,14 +21,25 @@ class ViewOrders extends Component {
             });
     }
 
-    render() {
+    handleDeleted(orderId)
+    {
+        this.setState(prev =>
+        {
+            return { orders: prev.orders.filter(ord => ord._id !== orderId) };
+        });
+    }
+
+    render()
+    {
         return (
             <Template>
                 <div className="container-fluid">
-                    {this.state.orders.map(order =>
-                    {
-                        return <EditableOrder order={order} />;
-                    })}
+                    {this.state.orders.map(order => (
+                        <EditableOrder
+                            key={order._id}
+                            order={order}
+                            onDelete={id => this.handleDeleted(id)} />))
+                    }
                 </div>
             </Template>
         );
