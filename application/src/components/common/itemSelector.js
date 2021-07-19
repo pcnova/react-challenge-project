@@ -30,7 +30,7 @@ class ItemSelector extends Component
             <select
                 value={this.props.selectedItem}
                 onChange={(event) => this.handleChange(event)}
-                className={this.props.className}>
+                className={this.props.className} hidden={this.props.hidden}>
                 <option value="" defaultValue disabled hidden>
                     {this.props.hintItem}
                 </option>
