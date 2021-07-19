@@ -1,11 +1,16 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux'; 
-import { loginUser } from '../../../redux/actions/authActions'
+import { connect } from 'react-redux';
+import { loginUser, logoutUser } from '../../../redux/actions/authActions'
 
 const mapActionsToProps = dispatch => ({
-  commenceLogin(email, password) {
-    dispatch(loginUser(email, password))
-  }
+    commenceLogin(email, password)
+    {
+        dispatch(loginUser(email, password))
+    },
+    logout()
+    {
+        dispatch(logoutUser())
+    }
 })
 
 class LoginForm extends Component {
@@ -22,6 +27,19 @@ class LoginForm extends Component {
 
   onChange(key, val) {
     this.setState({ [key]: val });
+  }
+
+  componentDidMount()
+  {
+      // Determine whether we need to logout from passed-in navigation state.
+      const navState = this.props.navState;
+      const logout =
+          navState === undefined || navState === null ? false : navState.out;
+      
+      if (logout)
+      {
+          this.props.logout();
+      }
   }
 
   render() {
