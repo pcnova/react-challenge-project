@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { FOOD_ITEMS, SERVER_IP } from '../../private';
+import { FOOD_ITEMS, QTTY_ITEMS, SERVER_IP } from '../../private';
 import ItemSelector from '../common/itemSelector';
 
 class EditableOrder extends Component
@@ -8,12 +8,16 @@ class EditableOrder extends Component
         order: this.props.order,
         editAction: "Edit",
         isEditing: false,
-        selectedItem: ""
+        selectedItem: "",
+        selectedQuantity: ""
     }
 
     toggleEdit(order, event)
     {
         event.preventDefault();
+
+        // To be assigned below, if we're currently editing.
+        var changedOrder;
 
         if (!this.state.isEditing)
         {
@@ -23,23 +27,23 @@ class EditableOrder extends Component
                 return { ...sta, editAction: "Save", isEditing: true };
             });
         }
-        else if (this.state.selectedItem === "" ||
-                 this.state.selectedItem === order.order_item)
+        else if ((changedOrder = this.getChanges(this.state)) == null)
         {
             // Nothing changed, exit editing mode.
             this.setState(sta =>
             {
                 return {
-                    ...sta, editAction: "Edit", isEditing: false, selectedItem: ""
+                    ...sta,
+                    editAction: "Edit",
+                    isEditing: false,
+                    selectedItem: "",
+                    selectedQuantity: ""
                 };
             });
         }
         else
         {
-            // Changes made, prepare the object to send back.
-            var changedOrder = { ...order, order_item: this.state.selectedItem };
-
-            // Save...
+            // Changes made, try to save...
             this.save(changedOrder)
                 .then(saved =>
                 {
@@ -51,7 +55,8 @@ class EditableOrder extends Component
                                 order: changedOrder,
                                 editAction: "Edit",
                                 isEditing: false,
-                                selectedItem: ""
+                                selectedItem: "",
+                                selectedQuantity: ""
                             });
                     }
                 });
@@ -61,6 +66,30 @@ class EditableOrder extends Component
     handleItemChanged(item)
     {
         this.setState(sta => { return { ...sta, selectedItem: item } });
+    }
+
+    handleQttyChanged(qtty)
+    {
+        this.setState(sta => { return { ...sta, selectedQuantity: qtty } });
+    }
+
+    getChange(selectedVal, originalVal)
+    {
+        const changed =
+            selectedVal !== "" && selectedVal !== originalVal;
+
+        return { changed, value: changed ? selectedVal : originalVal };
+    }
+
+    getChanges(state)
+    {
+        const order = state.order;
+        const item = this.getChange(state.selectedItem, order.order_item);
+        const qtty = this.getChange(state.selectedQuantity, order.quantity);
+
+        return item.changed || qtty.changed
+            ? { ...order, order_item: item.value, quantity: qtty.value }
+            : null;
     }
 
     save(order)
@@ -110,6 +139,12 @@ class EditableOrder extends Component
                 <div className="col-md-4 d-flex view-order-middle-col">
                     <p>Order placed at {`${createdDate.getHours()}:${createdDate.getMinutes()}:${createdDate.getSeconds()}`}</p>
                     <p>Quantity: {order.quantity}</p>
+                    <ItemSelector
+                        hintItem="Change to:"
+                        items={QTTY_ITEMS}
+                        selectedItem={this.state.selectedQuantity}
+                        onItemSelected={item => this.handleQttyChanged(item)}
+                        hidden={!this.state.isEditing} />
                 </div>
                 <div className="col-md-4 view-order-right-col">
                     <button className="btn btn-success"
