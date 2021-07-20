@@ -1,11 +1,20 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux'; 
-import { loginUser } from '../../../redux/actions/authActions'
+import { connect } from 'react-redux';
+import { loginUser, logoutUser } from '../../../redux/actions/authActions'
 
 const mapActionsToProps = dispatch => ({
-  commenceLogin(email, password) {
-    dispatch(loginUser(email, password))
-  }
+    commenceLogin(email, password)
+    {
+        dispatch(loginUser(email, password))
+    },
+    logout()
+    {
+        dispatch(logoutUser())
+    }
+})
+
+const mapStateToProps = (state) => ({
+    auth: state.auth,
 })
 
 class LoginForm extends Component {
@@ -17,11 +26,36 @@ class LoginForm extends Component {
   login(e) {
     e.preventDefault();
     this.props.commenceLogin(this.state.email, this.state.password);
-    this.props.onLogin();
   }
 
   onChange(key, val) {
     this.setState({ [key]: val });
+  }
+
+  componentDidMount()
+  {
+      // Determine whether we need to logout from passed-in navigation state.
+      const navState = this.props.navState;
+      const logout =
+          navState === undefined || navState === null ? false : navState.out;
+
+      if (logout)
+      {
+          this.props.logout();
+      }
+  }
+
+  componentDidUpdate(prevProps)
+  {
+      // Determine if we're being updated due to a successful login.
+      const loginChanging =
+          prevProps.auth.email !== this.props.auth.email &&
+          this.props.auth.email !== null;
+
+      if (loginChanging)
+      {
+          this.props.onLogin(); // Complete logging in.
+      }
   }
 
   render() {
@@ -43,4 +77,4 @@ class LoginForm extends Component {
   }
 }
 
-export default connect(null, mapActionsToProps)(LoginForm);
+export default connect(mapStateToProps, mapActionsToProps)(LoginForm);
